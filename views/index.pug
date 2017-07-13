@@ -1,0 +1,45 @@
+html
+  head
+    title='Temperature Diagram'
+    script(src='scripts/vis.js')
+    link(href='scripts/vis.css', rel='stylesheet' type='text/css')
+    style.
+      body, html {
+        font-family: sans-serif;
+      }
+  body
+    div#visualization
+    script.
+      var container = document.getElementById('visualization');
+      var items = !{data}
+      items.map(function(e){e.x=new Date(e.x); return e;})
+
+      
+      var groups = new vis.DataSet();
+      groups.add({
+        id: 'humid',
+        content: "Humidity",
+        options: {
+          yAxisOrientation: 'right',
+          drawPoints: {
+            style: 'square'
+          }
+      }});
+      groups.add({
+        id: 'temp',
+        content: "Temperature",
+        options: {
+          yAxisOrientation: 'left',
+          drawPoints: {
+            style: 'square'
+          },
+          shaded: {
+            orientation: 'bottom' // top, bottom
+          }
+      }});
+      var dataset = new vis.DataSet(items);
+
+      var options = {
+        legend: {enabled: true},
+      };
+      var graph2d = new vis.Graph2d(container, dataset, groups, options);
