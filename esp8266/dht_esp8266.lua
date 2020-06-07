@@ -8,16 +8,18 @@ SERVER_PASSWORD = "tutorials-raspberrypi.de"
 
 
 function wait_for_wifi_conn ( )
-   tmr.alarm (1, 1000, 1, function ( )
+   t = tmr.create();
+   t:register (1000, tmr.ALARM_AUTO, function ( )
       if wifi.sta.getip ( ) == nil then
          print ("Waiting for Wifi connection")
       else
-         tmr.stop (1)
+         t:stop();
          print ("ESP8266 mode is: " .. wifi.getmode ( ))
          print ("The module MAC address is: " .. wifi.ap.getmac ( ))
          print ("Config done, IP is " .. wifi.sta.getip ( ))
       end
    end)
+   t:start();
 end
 
 function transmit_msg(data)
@@ -70,8 +72,9 @@ wifi.sta.autoconnect(1)
 
 -- Hang out until we get a wifi connection before the httpd server is started.
 wait_for_wifi_conn ( )
-
-
-tmr.alarm(2, INTERVAL * 1000, tmr.ALARM_AUTO, function ()
+ 
+mainTimer = tmr.create();
+mainTimer:register(INTERVAL * 1000, tmr.ALARM_AUTO, function ()
     main()
 end)
+mainTimer:start();
