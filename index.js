@@ -75,12 +75,12 @@ app.post('/esp8266_trigger', function(req, res){
         res.json({"code" : 403, "error": "Humidity Value missing"});
         return;
     } else {
-        humiditiy = parseFloat(req.body.humidity);
+        humidity = parseFloat(req.body.humidity);
     }
  
     // save
     var query = connection.query('INSERT INTO temperature VALUES ' +
-                                ' (DEFAULT, '+mariadb.escape(sender_id)+', NOW(), '+temperature+', '+humiditiy+');', function (error, results, fields) {
+                                ' (DEFAULT, '+mariadb.escape(sender_id)+', NOW(), '+temperature+', '+humidity+');', function (error, results, fields) {
         if (error) {
             res.json({"code" : 403, "status" : "Error in connection database"});
             return;
