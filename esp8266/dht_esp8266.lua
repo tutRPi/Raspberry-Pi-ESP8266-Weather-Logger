@@ -42,7 +42,8 @@ function transmit_msg(data)
 end
 
 function readDHTValues()
-    status, temp, humi, temp_dec, humi_dec = dht.read(DHT_PIN)
+    status, temp, humi, temp_dec, humi_dec = dht.read(DHT_PIN) --DHT22
+   -- status, temp, humi, temp_dec, humi_dec = dht.read11(DHT_PIN) --DHT11
     if status == dht.OK then
         return {temperature= temp, humidity= humi}    
     else
