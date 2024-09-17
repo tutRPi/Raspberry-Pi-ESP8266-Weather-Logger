@@ -1,19 +1,25 @@
-var express     = require('express');
-var mysql       = require('mysql');
-var app         = express();
-var bodyParser  = require('body-parser');
+const SavePassword = 'tutorials-raspberrypi.de';
+var express = require('express');
+var mariadb = require('mariadb');
+var app = express();
+var bodyParser = require('body-parser');
 
-var SavePassword = 'tutorials-raspberrypi.de';
-
-var connection = mysql.createConnection({
-    host     : 'localhost',
-    user     : 'root',
-    password : 'your-password',
-    database : 'weather_station',
-    debug    :  false,
-    connectionLimit : 100
+// Erstelle einen Verbindungs-Pool zu MariaDB
+var pool = mariadb.createPool({
+    host: '127.0.0.1',
+    user: 'root',        // Ersetze durch deinen MariaDB-Benutzernamen
+    password: 'your-password',    // Ersetze durch dein MariaDB-Passwort
+    database: 'weather_station', // Ersetze durch den Namen deiner Datenbank
+    connectionLimit: 5  // Optional: Setze die Anzahl gleichzeitiger Verbindungen
 });
 
+app.set('port', (process.env.PORT || 8000));
+app.set('view engine', 'pug');
+app.use(express.static(__dirname + '/views'));
+app.use('/scripts', express.static(__dirname + '/node_modules/vis/dist/'));
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.set('port', (process.env.PORT || 8000))
 app.set('view engine', 'pug')
 app.use(express.static(__dirname + '/views'));
@@ -69,12 +75,12 @@ app.post('/esp8266_trigger', function(req, res){
         res.json({"code" : 403, "error": "Humidity Value missing"});
         return;
     } else {
-        humidtiy = parseFloat(req.body.humidity);
+        humidity = parseFloat(req.body.humidity);
     }
  
     // save
     var query = connection.query('INSERT INTO temperature VALUES ' +
-                                ' (DEFAULT, '+mysql.escape(sender_id)+', NOW(), '+temperature+', '+humidtiy+');', function (error, results, fields) {
+                                ' (DEFAULT, '+mariadb.escape(sender_id)+', NOW(), '+temperature+', '+humidity+');', function (error, results, fields) {
         if (error) {
             res.json({"code" : 403, "status" : "Error in connection database"});
             return;
