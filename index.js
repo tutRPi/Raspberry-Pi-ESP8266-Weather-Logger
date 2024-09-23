@@ -5,7 +5,7 @@ var app = express();
 var bodyParser = require('body-parser');
 
 // Erstelle einen Verbindungs-Pool zu MariaDB
-var pool = mariadb.createPool({
+var connection = mariadb.createPool({
     host: '127.0.0.1',
     user: 'root',        // Ersetze durch deinen MariaDB-Benutzernamen
     password: 'your-password',    // Ersetze durch dein MariaDB-Passwort
